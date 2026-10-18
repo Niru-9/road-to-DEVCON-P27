@@ -1,0 +1,10 @@
+node_modules/
+out/
+dist/
+.env
+*.log
+.DS_Store
+
+# local-only working docs (kept out of the public repo)
+info.md
+docs/

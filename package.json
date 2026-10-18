@@ -1,0 +1,23 @@
+{
+  "name": "bhasha-markets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "One English market in -> Hindi/Tamil/Marathi out, with facts that cannot drift.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "cli": "tsx src/cli.ts",
+    "demo": "tsx src/cli.ts demo"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  }
+}
