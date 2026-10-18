@@ -56,9 +56,12 @@ export function buildProgram(): Command {
     .argument("<marketFile>", "path to an English market JSON")
     .option("--out <dir>", "output directory", "out")
     .option("--corrupt", "use the intentionally broken translator (demo)")
-    .action(async (file: string, opts: { out: string; corrupt?: boolean }) => {
+    .option("--backend <name>", "mock | sarvam | llm (default: $BHASHA_BACKEND)")
+    .action(async (file: string, opts: { out: string; corrupt?: boolean; backend?: string }) => {
       const market = loadMarket(file);
-      const translator = opts.corrupt ? mockTranslator({ corrupt: true }) : translatorFromEnv();
+      const translator = opts.corrupt
+        ? mockTranslator({ corrupt: true })
+        : translatorFromEnv(opts.backend);
       const built = rejectBlocked(await buildMarket(market, translator));
       const jsonPath = `${opts.out}/${market.id}.json`;
       save(jsonPath, built);

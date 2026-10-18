@@ -51,7 +51,7 @@ describe("buildMarket", () => {
     const bad: Translator = {
       name: "bad",
       async translate(text) {
-        return text.replace("⟦N0⟧", "10,00,000");
+        return text.replace("{{0}}", "10,00,000");
       },
     };
     const built = await buildMarket(market, bad);

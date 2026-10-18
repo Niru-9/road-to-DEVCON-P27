@@ -41,7 +41,7 @@ the checker.
 ```bash
 npm install
 
-npm test          # 45 tests across 9 suites (vitest)
+npm test          # 52 tests across 10 suites (vitest)
 npm run demo      # happy path, then both incidents caught and refused
 ```
 
@@ -64,7 +64,7 @@ publish ok: hi, ta, mr
   ✗ relation before before 15 June 2026 — relation "before" rendered as conflicting "तक" (in question)
   ✗ number-present 15 — source number 15 (15) missing from question
   ✗ no-extra-number 1000000 — translation contains number 1000000 in question that is absent from the English source (possible lakh/crore drift)
-  ✗ placeholder all placeholders restored — question: ⟦N0⟧ missing in translation (expected 15)
+  ✗ placeholder all placeholders restored — question: {{0}} missing in translation (expected 15)
   ...
 
 publish refused as expected:
@@ -83,7 +83,7 @@ npm run cli -- <command> [options]
 
 | Command | What it does |
 | --- | --- |
-| `build <marketFile> [--out <dir>] [--corrupt]` | Translate one English market into hi/ta/mr, verify each, write `out/<id>.json` + `out/<id>.review.html`. |
+| `build <marketFile> [--out <dir>] [--corrupt] [--backend <name>]` | Translate one English market into hi/ta/mr, verify each, write `out/<id>.json` + `out/<id>.review.html`. |
 | `review <builtFile> [--fix lang:field=text]... [--approve <lang>] [--page]` | Human review lane: read the side-by-side page, fix one field at a time (repeatable), or approve a language. |
 | `publish <builtFile> [--lang <lang>]` | Publish approved version(s). Refuses anything blocked or not approved. |
 | `demo [--out <dir>]` | Happy path, then replay both production incidents and show them refused. |
@@ -160,10 +160,15 @@ question and the rules is checked in both.
 
 ### 2. Protect numbers before translating
 
-`src/protect.ts` masks every digit-run as a placeholder (`⟦N0⟧`, `⟦N1⟧`, …) before the
+`src/protect.ts` masks every digit-run as a placeholder (`{{0}}`, `{{1}}`, …) before the
 text reaches the translator, then restores the original bytes afterwards. **Numbers
 never pass through the translator**, so the number check is a backstop against
 placeholder corruption, not the only defence.
+
+> The `{{0}}` shape is deliberate: symbols plus a bare index, with **no Latin letters**.
+> Verified against Sarvam for hi/ta/mr — real translators transliterate letter-bearing
+> tokens (`⟦N0⟧` → `⟦एन एक⟧`, `[[N0]]` → `[[एन2]]`) or drop them, but `{{0}}` survives
+> verbatim. Native index digits are folded to ASCII on restore, so `{{०}}` still matches.
 
 ### 3. Verify every translation against every invariant
 
@@ -175,7 +180,7 @@ appears in:
 | `placeholder` | every masked token was restored verbatim |
 | `number-present` | each source number is present (Devanagari/Tamil digits folded, `1,00,000` == `100000`) |
 | `date` | the deadline's day **and** month are preserved |
-| `relation` | the deadline wording matches the source relation per the language lexicon — a conflicting word (`before` → `by`) is blocked |
+| `relation` | the deadline wording matches the source relation per the language lexicon. A conflicting word is only counted **next to the date**, so a benign "reach up to 1,00,000" (`तक`) is not mistaken for a "by 15 June" (`तक`) drift; `on DATE` is neutral. |
 | `no-extra-number` | no number appears that the source never contained (catches a 10× drift) |
 
 If **any** rule fails, that language version is `blocked`.
@@ -209,11 +214,23 @@ SARVAM_API_KEY=your-key-here
 
 # or inline for a single run
 BHASHA_BACKEND=sarvam SARVAM_API_KEY=your-key-here npm run cli -- build markets/prize-pool.json --out out
+
+# or override per run without touching .env
+npm run cli -- build markets/prize-pool.json --out out --backend sarvam
 ```
 
 All three sit behind one `Translator` interface, so the pipeline and the checks are
 identical no matter which backend produced the text. **No credentials live in tracked
 files** — `.env.example` contains empty placeholders only, and `.env` is gitignored.
+
+### Verified against a real translator (Sarvam)
+
+With a live key, `build` produces genuine Hindi/Tamil/Marathi and the guarantee still
+holds: `{{0}}` placeholders survive so every number is restored byte-for-byte, and runs
+where Sarvam rendered "before" as the by-word (`15 जून 2026 तक`, `15 जून 2026 पर्यंत`)
+or dropped a number were **blocked**. From there the reviewer fixed the flagged field,
+approved, and published — the full `draft → blocked → approve → publish` journey on real
+API output, not just the mock.
 
 ---
 
@@ -261,7 +278,7 @@ src/
   extract.ts      invariant extraction (regex) — never a model
   normalize.ts    Devanagari/Tamil digit folding, grouping-separator stripping
   relations.ts    deadline-relation lexicon per language (before/by/after/until/…)
-  protect.ts      ⟦N#k⟧ masking + verbatim restore
+  protect.ts      {{0}}-style masking + verbatim restore
   verify.ts       the invariant checks + check entry format
   translate/      mock | sarvam | llm backends behind one Translator interface
   pipeline.ts     buildMarket(): mask → translate → restore → verify → status
@@ -277,7 +294,7 @@ tests/            vitest suite + fixtures
 ## Scripts
 
 ```bash
-npm test          # 45 tests (vitest)
+npm test          # 52 tests (vitest)
 npm run build     # tsc type-check
 npm run demo      # end-to-end demonstration
 npm run serve     # preview the review pages in a browser

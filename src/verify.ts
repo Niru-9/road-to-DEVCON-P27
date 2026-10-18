@@ -45,6 +45,22 @@ function hasMonth(text: string, month: number): boolean {
 const hasDay = (foundNumbers: string[], day: string) =>
   foundNumbers.some((n) => Number(n) === Number(day));
 
+/**
+ * Words that locate a date inside translated text — the month name in every
+ * script, the year, and a two-digit day. Used to scope relation conflicts so a
+ * benign "reach up to 1,00,000" is not read as a "by 15 June" deadline drift.
+ */
+function dateAnchors(inv: Invariant): string[] {
+  const anchors: string[] = [];
+  const month = monthOf(inv.value);
+  if (month) anchors.push(...(MONTH_VARIANTS[month] ?? []));
+  const year = inv.value.match(/(\d{4})$/)?.[1];
+  if (year) anchors.push(year);
+  const day = dayOf(inv.value);
+  if (day && day.length >= 2) anchors.push(day); // skip generic single digits
+  return anchors;
+}
+
 export type VerifyArgs = {
   lang: Lang;
   source: Market;
@@ -102,7 +118,7 @@ export function verifyVersion(args: VerifyArgs): CheckResult[] {
         });
 
         if (inv.kind === "deadline" && inv.relation) {
-          const rc = checkRelation(inv.relation as Relation, lang, text);
+          const rc = checkRelation(inv.relation as Relation, lang, text, dateAnchors(inv));
           results.push({
             invariantId: inv.id,
             field,

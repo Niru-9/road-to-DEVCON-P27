@@ -27,4 +27,22 @@ describe("checkRelation", () => {
     // "से पहले तक" contains both the before-word and the by-word — a human must look
     expect(checkRelation("before", "hi", "15 जून 2026 से पहले तक").ok).toBe(false);
   });
+
+  it("does NOT flag a benign 'reach up to N' as a by-drift", () => {
+    // "1,00,000 टोकन तक पहुँचेगा" = "will reach up to 1,00,000" — तक is harmless here
+    const text = "क्या 15 जून 2026 से पहले पुरस्कार पूल 1,00,000 टोकन तक पहुँचेगा?";
+    expect(checkRelation("before", "hi", text, ["जून", "2026"]).ok).toBe(true);
+  });
+
+  it("still flags the drift when the conflicting word sits next to the date", () => {
+    const text = "जून 2026 पर्यंत बक्षीस पूल पोहोचेल का?";
+    const r = checkRelation("before", "mr", text, ["जून", "2026"]);
+    expect(r.ok).toBe(false);
+    expect(r.detail).toMatch(/पर्यंत/);
+  });
+
+  it("treats 'on DATE' as neutral — the date check already covers it", () => {
+    expect(checkRelation("on", "hi", "15 जून 2026").ok).toBe(true);
+    expect(checkRelation("on", "mr", "15 जून 2026").ok).toBe(true);
+  });
 });

@@ -28,10 +28,14 @@ export function renderReviewPage(built: BuiltMarket): string {
     })
     .join("\n");
 
-  const blocked = built.versions.filter((v) => v.status !== "approved").length;
+  const blocked = built.versions.filter((v) => v.status === "blocked").length;
+  const drafts = built.versions.filter((v) => v.status === "draft").length;
   const banner = blocked
-    ? `⛔ ${blocked} language version(s) blocked — publish will refuse`
-    : "✅ all versions clean — ready to publish";
+    ? `⛔ ${blocked} language version(s) blocked — fix the red fields, then approve`
+    : drafts
+      ? `⏳ ${drafts} language version(s) awaiting human approval`
+      : "✅ all versions approved — ready to publish";
+  const tone = blocked ? "#7f1d1d" : drafts ? "#78350f" : "#14532d";
 
   return `<!doctype html><html><head><meta charset="utf-8"><title>Review ${esc(built.source.id)}</title>
 <style>
@@ -45,7 +49,7 @@ th{background:#171a21;text-align:left}
 .why{margin:.4rem 0 0;padding-left:1.1rem;font-size:.8rem;color:#fca5a5}
 .tag{opacity:.6;font-size:.75rem;margin-top:.4rem}
 h1{font-size:1.2rem}
-.banner{padding:.8rem;border-radius:6px;margin-bottom:1rem;background:${blocked ? "#7f1d1d" : "#14532d"}}
+.banner{padding:.8rem;border-radius:6px;margin-bottom:1rem;background:${tone}}
 code{background:#171a21;padding:.1rem .3rem;border-radius:4px}
 </style></head><body>
 <h1>Review lane — ${esc(built.source.id)}</h1>

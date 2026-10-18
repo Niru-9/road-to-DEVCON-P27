@@ -61,7 +61,7 @@ export function mockTranslator(opts: MockOptions = {}): Translator {
         (ctx?.field === "question" || ctx?.field === "resolutionRules")
       ) {
         // incident 1: a lakh became a crore — first masked number is rewritten
-        out = out.replace(/⟦N(\d+)⟧/, (ph, i) => (i === "0" ? "10,00,000" : ph));
+        out = out.replace(/\{\{(\d+)\}\}/, (ph, i) => (i === "0" ? "10,00,000" : ph));
         // incident 2: "before" rendered as the "by" wording
         const [before, by] = SWAP_BEFORE_TO_BY[to];
         out = out.replace(new RegExp(before, "g"), by);

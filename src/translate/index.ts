@@ -10,9 +10,9 @@ export type Translator = {
   translate(text: string, from: "en", to: Lang, ctx?: TranslateContext): Promise<string>;
 };
 
-/** Backend from env. `mock` needs no key and is what tests/demo run on. */
-export function translatorFromEnv(): Translator {
-  const which = (process.env.BHASHA_BACKEND ?? "mock").toLowerCase();
+/** Backend from env (or an explicit override). `mock` needs no key — tests/demo run on it. */
+export function translatorFromEnv(override?: string): Translator {
+  const which = (override ?? process.env.BHASHA_BACKEND ?? "mock").toLowerCase();
   if (which === "sarvam") return sarvamTranslator(process.env.SARVAM_API_KEY ?? "");
   if (which === "llm")
     return llmTranslator({
