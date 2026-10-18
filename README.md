@@ -119,6 +119,29 @@ Statuses flow **`draft → approved → published`**. Anything with a failed che
 `0` success · `1` a `CliError` (bad path, blocked approval, refused publish) ·
 Commander's own code for usage errors.
 
+### Preview in the browser
+
+The review pages are plain static HTML, so there is nothing to deploy — but browsers
+block `file://` in many cases, so a tiny zero-dependency static server is included:
+
+```bash
+npm run cli -- build markets/prize-pool.json --out out   # generate the pages (once)
+npm run serve                                            # http://127.0.0.1:4173
+```
+
+Then open:
+
+- <http://127.0.0.1:4173/prize-pool.review.html> — the review lane
+- <http://127.0.0.1:4173/monsoon-arrival.review.html>
+- <http://127.0.0.1:4173/assembly-turnout.review.html>
+
+Options: `npm run serve -- --dir out --port 4173 --host 127.0.0.1`. To see the
+blocked state instead of a clean one, rebuild with `--corrupt` first:
+
+```bash
+npm run cli -- build markets/prize-pool.json --out out --corrupt
+```
+
 ---
 
 ## How the guarantee works
@@ -234,6 +257,7 @@ src/
   reviewPage.ts   static side-by-side review HTML
   publish.ts      publish gate (approved only) + PublishBlockedError
   cli.ts          build / review / publish / demo commands
+  serve.ts        zero-dependency static server for the review pages
 markets/          three sample English markets
 tests/            vitest suite + fixtures
 ```
@@ -244,6 +268,7 @@ tests/            vitest suite + fixtures
 npm test          # 45 tests (vitest)
 npm run build     # tsc type-check
 npm run demo      # end-to-end demonstration
+npm run serve     # preview the review pages in a browser
 npm run cli -- --help
 ```
 

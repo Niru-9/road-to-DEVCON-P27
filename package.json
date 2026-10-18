@@ -8,7 +8,8 @@
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "cli": "tsx src/cli.ts",
-    "demo": "tsx src/cli.ts demo"
+    "demo": "tsx src/cli.ts demo",
+    "serve": "tsx src/serve.ts"
   },
   "dependencies": {
     "commander": "^12.1.0",
