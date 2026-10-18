@@ -191,7 +191,18 @@ const isDirectRun =
   process.argv[1] !== undefined &&
   import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
 
+/** Load a local `.env` (gitignored) so keys like SARVAM_API_KEY can live there. */
+function loadDotEnv(): void {
+  try {
+    // Node >= 20.12: reads ./.env relative to cwd; no-op error if absent
+    (process as unknown as { loadEnvFile?: (p?: string) => void }).loadEnvFile?.();
+  } catch {
+    // no .env present — fall back to real environment variables
+  }
+}
+
 if (isDirectRun) {
+  loadDotEnv();
   runCli(process.argv.slice(2)).then((code) => {
     process.exitCode = code;
   });

@@ -191,7 +191,8 @@ cannot ship.
 
 ## Translation backends
 
-Selected with `BHASHA_BACKEND` (copy `.env.example` to `.env`, which is gitignored):
+Selected with `BHASHA_BACKEND` (copy `.env.example` to `.env`, which is gitignored and
+auto-loaded by the CLI):
 
 | `BHASHA_BACKEND` | Backend | Notes |
 | --- | --- | --- |
@@ -199,9 +200,20 @@ Selected with `BHASHA_BACKEND` (copy `.env.example` to `.env`, which is gitignor
 | `sarvam` | [Sarvam Translate API](https://docs.sarvam.ai/api-reference-docs/) | Needs `SARVAM_API_KEY`. |
 | `llm` | Any OpenAI-compatible chat endpoint | Needs `LLM_API_KEY`, optional `LLM_BASE_URL` / `LLM_MODEL`. |
 
+Set the key either in `.env` or as a real environment variable — both work:
+
+```bash
+# .env  (gitignored; loaded automatically when the CLI starts)
+BHASHA_BACKEND=sarvam
+SARVAM_API_KEY=your-key-here
+
+# or inline for a single run
+BHASHA_BACKEND=sarvam SARVAM_API_KEY=your-key-here npm run cli -- build markets/prize-pool.json --out out
+```
+
 All three sit behind one `Translator` interface, so the pipeline and the checks are
 identical no matter which backend produced the text. **No credentials live in tracked
-files** — `.env.example` contains empty placeholders only.
+files** — `.env.example` contains empty placeholders only, and `.env` is gitignored.
 
 ---
 
