@@ -13,13 +13,16 @@ export function sarvamTranslator(apiKey: string): Translator {
         headers: { "Content-Type": "application/json", "api-subscription-key": apiKey },
         body: JSON.stringify({
           input: text,
-          from: `${from}-IN`,
-          to: LANG_CODE[to],
+          source_language_code: `${from}-IN`,
+          target_language_code: LANG_CODE[to],
           mode: "formal",
         }),
       });
       if (!res.ok) throw new Error(`sarvam ${res.status}: ${await res.text()}`);
-      const data = (await res.json()) as { translated_text: string };
+      const data = (await res.json()) as { translated_text?: string };
+      if (!data.translated_text) {
+        throw new Error(`sarvam: no translated_text in response: ${JSON.stringify(data)}`);
+      }
       return data.translated_text;
     },
   };
