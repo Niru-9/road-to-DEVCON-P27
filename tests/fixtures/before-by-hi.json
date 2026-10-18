@@ -1,0 +1,17 @@
+{
+  "note": "Deliberately broken fixture: 'before 15 June' rendered as '15 जून तक' (by 15 June) — the exact production incident.",
+  "lang": "hi",
+  "source": {
+    "id": "before-by",
+    "question": "Will the monsoon arrive over Kerala before 15 June 2026?",
+    "resolutionRules": "Resolves YES if the India Meteorological Department declares arrival before 15 June 2026.",
+    "closeDate": "15 June 2026, 5:00 PM IST",
+    "resolutionSource": "https://example.com/imd"
+  },
+  "translation": {
+    "question": "क्या मानसून 15 जून 2026 तक केरल में पहले आ जाएगा?",
+    "resolutionRules": "हाँ माना जाएगा यदि भारत मौसम विज्ञान विभाग 15 जून 2026 तक आगमन घोषित करता है।",
+    "closeDate": "15 जून 2026, 5:00 PM IST",
+    "resolutionSource": "https://example.com/imd"
+  }
+}

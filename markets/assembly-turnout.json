@@ -1,0 +1,7 @@
+{
+  "id": "assembly-turnout",
+  "question": "Will turnout in the Maharashtra assembly election exceed 65%?",
+  "resolutionRules": "Resolves YES if the Election Commission's final turnout figure exceeds 65% on 20 October 2026. Postal ballots are included.",
+  "closeDate": "21 October 2026, 8:00 PM IST",
+  "resolutionSource": "https://example.com/eci"
+}

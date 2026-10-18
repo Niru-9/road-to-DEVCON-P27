@@ -1,0 +1,7 @@
+{
+  "id": "prize-pool",
+  "question": "Will the prize pool reach 1,00,000 tokens before 15 June 2026?",
+  "resolutionRules": "Resolves YES if the final pool is at least 1,00,000 tokens on 15 June 2026.",
+  "closeDate": "15 June 2026, 11:59 PM IST",
+  "resolutionSource": "https://example.com/leaderboard"
+}

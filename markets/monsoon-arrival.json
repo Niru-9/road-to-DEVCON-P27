@@ -1,0 +1,7 @@
+{
+  "id": "monsoon-arrival",
+  "question": "Will the southwest monsoon arrive over Kerala before 15 June 2026?",
+  "resolutionRules": "Resolves YES if the India Meteorological Department declares the onset over Kerala before 15 June 2026. A declaration dated exactly 15 June 2026 resolves NO.",
+  "closeDate": "16 June 2026, 5:00 PM IST",
+  "resolutionSource": "https://example.com/imd"
+}

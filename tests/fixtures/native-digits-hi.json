@@ -1,0 +1,17 @@
+{
+  "note": "Same facts written with Devanagari digits and Indian grouping; must verify clean after normalization.",
+  "lang": "hi",
+  "source": {
+    "id": "native",
+    "question": "Will 250 mm of rain be recorded by 30 June 2026?",
+    "resolutionRules": "Resolves YES if the tally is 250 mm or more on 30 June 2026.",
+    "closeDate": "30 June 2026, 11:59 PM IST",
+    "resolutionSource": "https://example.com/imd"
+  },
+  "translation": {
+    "question": "क्या ३० जून २०२६ तक २५० मिमी वर्षा दर्ज की जाएगी?",
+    "resolutionRules": "हाँ माना जाएगा यदि ३० जून २०२६ को आँकड़ा २५० मिमी या अधिक हो।",
+    "closeDate": "३० जून २०२६, ११:५९ PM IST",
+    "resolutionSource": "https://example.com/imd"
+  }
+}
